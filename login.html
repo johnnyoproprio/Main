@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cantina Escolar - Login</title>
+    <style>
+        :root { --primary: #ffc107; --dark: #212529; --bg: #f8f9fa; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 420px; text-align: center; }
+        .tabs { display: flex; justify-content: space-around; margin-bottom: 25px; border-bottom: 2px solid #ddd; }
+        .tab-btn { background: none; border: none; padding: 10px; font-size: 16px; font-weight: bold; color: #888; cursor: pointer; width: 50%; transition: 0.2s; }
+        .tab-btn.active { color: var(--dark); border-bottom: 3px solid var(--primary); }
+        h2 { color: var(--dark); margin-bottom: 10px; font-size: 22px; }
+        .subtitle { color: #6c757d; font-size: 14px; margin-bottom: 20px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; font-size: 16px; }
+        .btn { width: 100%; padding: 12px; background: var(--primary); border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn:hover { background: #e0a800; }
+        .toggle { margin-top: 15px; font-size: 14px; }
+        .toggle span { color: #007bff; cursor: pointer; font-weight: bold; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-owner" onclick="switchRole('owner')">Sou Funcionario</button>
+            <button class="tab-btn" id="tab-student" onclick="switchRole('student')">Sou Aluno</button>
+        </div>
+
+        <h2 id="title">Login da Cantina</h2>
+        <p class="subtitle" id="subtitle">Faça login para gerenciar seu estoque, fila e preços.</p>
+
+        <form onsubmit="handleAuth(event)">
+            <div id="credentials-fields">
+                <div class="input-group">
+                    <label>E-mail Escolar</label>
+                    <input type="email" id="email" placeholder="seuemail@escola.com">
+                </div>
+                <div class="input-group">
+                    <label>Senha</label>
+                    <input type="password" id="password" placeholder="Sua senha">
+                </div>
+            </div>
+
+            <div class="input-group hidden" id="shop-group">
+                <label>Nome da Cantina</label>
+                <input type="text" id="shop-name" placeholder="Ex: Cantina Central">
+            </div>
+
+            <div class="input-group hidden" id="student-group">
+                <label>Seu Nome / Turma</label>
+                <input type="text" id="student-name" placeholder="Ex: Lucas - 3º Ano A">
+            </div>
+
+            <button type="submit" class="btn" id="btn-text">Entrar no Painel</button>
+        </form>
+
+        <p class="toggle" id="toggle-text">Não tem cadastro? <span onclick="toggleMode()">Criar Loja</span></p>
+    </div>
+
+    <script>
+        let currentRole = 'owner';
+        let isLoginMode = true;
+
+        function switchRole(role) {
+            currentRole = role;
+            isLoginMode = true;
+            
+            const tabOwner = document.getElementById('tab-owner');
+            const tabStudent = document.getElementById('tab-student');
+            const title = document.getElementById('title');
+            const subtitle = document.getElementById('subtitle');
+            const credentialsFields = document.getElementById('credentials-fields');
+            const shopGroup = document.getElementById('shop-group');
+            const studentGroup = document.getElementById('student-group');
+            const btnText = document.getElementById('btn-text');
+            const toggleText = document.getElementById('toggle-text');
+
+            if (!tabOwner || !tabStudent) return;
+
+            tabOwner.classList.remove('active');
+            tabStudent.classList.remove('active');
+
+            if (role === 'owner') {
+                tabOwner.classList.add('active');
+                if(title) title.innerText = "Login da Cantina";
+                if(subtitle) subtitle.innerText = "Faça login para gerenciar seu estoque, fila e preços.";
+                if(credentialsFields) credentialsFields.classList.remove('hidden');
+                if(shopGroup) shopGroup.classList.add('hidden');
+                if(studentGroup) studentGroup.classList.add('hidden');
+                if(btnText) btnText.innerText = "Entrar no Painel";
+                if(toggleText) {
+                    toggleText.classList.remove('hidden');
+                    toggleText.innerHTML = 'Não tem cadastro? <span onclick="toggleMode()">Criar Loja</span>';
+                }
+            } else {
+                tabStudent.classList.add('active');
+                if(title) title.innerText = "Acesso do Aluno";
+                if(subtitle) subtitle.innerText = "Digite seu nome para visualizar o cardápio e fazer pedidos.";
+                if(credentialsFields) credentialsFields.classList.add('hidden');
+                if(shopGroup) shopGroup.classList.add('hidden');
+                if(studentGroup) studentGroup.classList.remove('hidden');
+                if(btnText) btnText.innerText = "Ver Cardápio";
+                if(toggleText) toggleText.classList.add('hidden');
+            }
+        }
+
+        function toggleMode() {
+            if (currentRole !== 'owner') return;
+
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('title');
+            const subtitle = document.getElementById('subtitle');
+            const shopGroup = document.getElementById('shop-group');
+            const btnText = document.getElementById('btn-text');
+            const toggleText = document.getElementById('toggle-text');
+
+            if (isLoginMode) {
+                if(title) title.innerText = "Login da Cantina";
+                if(subtitle) subtitle.innerText = "Faça login para gerenciar seu estoque, fila e preços.";
+                if(shopGroup) shopGroup.classList.add('hidden');
+                if(btnText) btnText.innerText = "Entrar no Painel";
+                if(toggleText) toggleText.innerHTML = 'Não tem cadastro? <span onclick="toggleMode()">Criar Loja</span>';
+            } else {
+                if(title) title.innerText = "Criar Nova Loja";
+                if(subtitle) subtitle.innerText = "Cadastre sua cantina para acompanhar estoque e pedidos em tempo real.";
+                if(shopGroup) shopGroup.classList.remove('hidden');
+                if(btnText) btnText.innerText = "Criar Loja";
+                if(toggleText) toggleText.innerHTML = 'Já tem cadastro? <span onclick="toggleMode()">Fazer Login</span>';
+            }
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+
+            if (currentRole === 'owner') {
+                const name = document.getElementById('shop-name').value || "Cantina Escolar";
+                localStorage.setItem('cantina_nome', name);
+                localStorage.setItem('usuario_tipo', 'owner');
+                
+                // Se der erro ao entrar, verifique se o seu arquivo principal se chama index.html (minúsculo) ou Index.Html (maiúsculo)
+                window.location.href = "index.html";
+            } else {
+                const studentName = document.getElementById('student-name').value || "Aluno Anônimo";
+                localStorage.setItem('aluno_nome', studentName);
+                localStorage.setItem('usuario_tipo', 'student');
+                
+                window.location.href = "pratos.html";
+            }
+        }
+    </script>
+
+</body>
+</html>
